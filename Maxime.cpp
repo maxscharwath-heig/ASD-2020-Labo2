@@ -14,6 +14,10 @@ struct P {
       return PIECES[id];
    }
 
+   AttachementType getAttachement(size_t r = 0) {
+      getPiece()[(rot + r) % 4]
+   }
+
    string getCode() {
       char v = 'a' + rot;
       return to_string(id + 1) + v;
@@ -47,11 +51,11 @@ bool checkAttachement(AttachementType aA, AttachementType aB) {
 
 bool tester(size_t p, const Tableau &tab) {
    if (p - 3 > 0) {
-      if (!checkAttachement(tab[p].getPiece()[0], tab[p - 3].getPiece()[2]))
+      if (!checkAttachement(tab[p].getAttachement(0), tab[p - 3].getAttachement(2)))
          return false;
    }
    if (p - 1 > 0) {
-      if (!checkAttachement(tab[p].getPiece()[3], tab[p - 1].getPiece()[1]))
+      if (!checkAttachement(tab[p].getAttachement(3), tab[p - 1].getAttachement(1)))
          return false;
    }
    return true;
