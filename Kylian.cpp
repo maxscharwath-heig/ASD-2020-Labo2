@@ -10,11 +10,15 @@ using namespace std;
 struct P {
     P(size_t id = 0, size_t rot = 0) : id(id), rot(rot) {}
 
-    size_t id;
+    size_t id = 0;
     size_t rot = 0;
 
     Piece getPiece() const {
         return PIECES[id];
+    }
+
+    AttachementType getAttachement(size_t r = 0) const{
+        return getPiece()[(rot + r) % 4];
     }
 
     string getCode() {
@@ -62,32 +66,37 @@ bool checkAttachement(AttachementType aA, AttachementType aB) {
 }
 
 bool tester(size_t p, const Tableau &tab) {
-    if (p - 3 > 0) {
-        if (!checkAttachement(tab[p].getPiece()[0], tab[p - 3].getPiece()[2]))
+    if (p / 3 != 2) {
+        if (!checkAttachement(tab[p].getAttachement(2), tab[p + 3].getAttachement(0)))
             return false;
     }
-    if (p - 1 > 0) {
-        if (!checkAttachement(tab[p].getPiece()[3], tab[p - 1].getPiece()[1]))
+    if (p % 3 != 2) {
+        if (!checkAttachement(tab[p].getAttachement(1), tab[p + 1].getAttachement(3)))
             return false;
     }
     return true;
 }
 
 void solutionRec(Tableau& tab, size_t taille ){
-    if( taille == 1 ){
-        for(size_t i = 0; i < 3; ++i)
-            cout << tab[i].id;
+    if( taille == 0 ){
+        for(size_t i = 0; i < 9; ++i)
+            cout << tab[i].getCode() << " ";
         cout << endl;
     }else{
-        for(size_t i = 0; i < taille - 1; ++i ){
-            for(size_t j = 0; j < 4; ++j)
-                if( tester(taille,tab) ){
-                    swap(tab[i], tab[taille - 1]);
-                    solutionRec( tab, taille-1);
-                    swap(tab[i], tab[taille - 1]);
+        for(size_t i = 0; i < taille ; ++i ){
+
+            for( ; tab[i].rot < 4; ++tab[i].rot) {
+                swap(tab[i], tab[taille - 1]);
+                if (tester(taille - 1, tab)) {
+                    solutionRec(tab, taille - 1);
                 }
+                swap(tab[i], tab[taille - 1]);
+            }
+
+            tab[i].rot = 0;
+
         }
-        solutionRec(tab, taille-1);
+        //solutionRec(tab, taille-1);
     }
 }
 
