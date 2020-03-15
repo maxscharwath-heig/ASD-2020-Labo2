@@ -3,4 +3,4 @@ project(LABO2)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(LABO2 main.cpp pieces.cpp pieces.h)
+add_executable(LABO2 Maxime.cpp pieces.cpp pieces.h)
