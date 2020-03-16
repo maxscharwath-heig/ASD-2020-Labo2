@@ -3,42 +3,58 @@
 #include <array>
 #include <utility>
 #include <string>
-#include <iostream>
 
 using namespace std;
 
-struct P {
-    P(size_t id = 0, size_t rot = 0) : id(id), rot(rot) {}
+/*--------------------------------------------------------------------------------*/
 
-    size_t id = 0;
-    size_t rot = 0;
+struct PieceEntity {
+    PieceEntity(size_t id, size_t rot = 0) : id(id), rot(rot) {}
 
-    Piece getPiece() const {
-        return PIECES[id];
-    }
+    size_t id;
+    size_t rot;
 
-    AttachementType getAttachement(size_t r = 0) const{
-        return getPiece()[(rot + r) % 4];
-    }
-
-    string getCode() {
-        char v = 'a' + rot;
-        return to_string(id + 1) + v;
-    }
+    Piece getPiece() const;
+    AttachementType getAttachement(size_t r = 0) const;
+    string getCode();
 };
 
-using Tableau = array<P, 9>;
+using Tableau = array<PieceEntity, 9>;
 
 void solutionRec(Tableau& tab, size_t taille, size_t largeur, size_t hauteur);
 bool tester(size_t p, const Tableau &tab, size_t largeur, size_t hauteur);
 
+/*--------------------------------------------------------------------------------*/
+
 int main() {
     const unsigned HAUTEUR = 3,
                    LARGEUR = 3;
-    Tableau tab = {P(0), P(1), P(2), P(3), P(4), P(5), P(6), P(7), P(8)};
+
+    Tableau tab = {PieceEntity(0), PieceEntity(1), PieceEntity(2),
+                   PieceEntity(3), PieceEntity(4), PieceEntity(5),
+                   PieceEntity(6), PieceEntity(7), PieceEntity(8)};
+
     solutionRec(tab, tab.size(), LARGEUR, HAUTEUR);
+
     return EXIT_SUCCESS;
 }
+
+/*--------------------------------------------------------------------------------*/
+
+Piece PieceEntity::getPiece() const {
+    return PIECES[id];
+}
+
+AttachementType PieceEntity::getAttachement(size_t r) const {
+    return getPiece()[(rot + r) % 4];
+}
+
+string PieceEntity::getCode() {
+    char v = 'a' + rot;
+    return to_string(id + 1) + v;
+}
+
+/*--------------------------------------------------------------------------------*/
 
 bool checkAttachement(AttachementType aA, AttachementType aB) {
     switch (aA) {
