@@ -29,17 +29,15 @@ struct P {
 
 using Tableau = array<P, 9>;
 
-void solutionRec(Tableau& tab, size_t taille);
-
-//void solutionRec(size_t idPi, size_t pos, Tableau &tab);
-
-bool tester(size_t p1, size_t p2, const Tableau &tab);
+void solutionRec(Tableau& tab, size_t taille, size_t largeur, size_t hauteur);
+bool tester(size_t p, const Tableau &tab, size_t largeur, size_t hauteur);
 
 int main() {
+    const unsigned HAUTEUR = 3,
+                   LARGEUR = 3;
     Tableau tab = {P(0), P(1), P(2), P(3), P(4), P(5), P(6), P(7), P(8)};
-    solutionRec(tab, tab.size() );
-    //solutionRec(8, 0, tab);
-    return 0;
+    solutionRec(tab, tab.size(), LARGEUR, HAUTEUR);
+    return EXIT_SUCCESS;
 }
 
 bool checkAttachement(AttachementType aA, AttachementType aB) {
@@ -65,50 +63,33 @@ bool checkAttachement(AttachementType aA, AttachementType aB) {
     }
 }
 
-bool tester(size_t p, const Tableau &tab) {
-    if (p / 3 != 2) {
-        if (!checkAttachement(tab[p].getAttachement(2), tab[p + 3].getAttachement(0)))
+bool tester(size_t p, const Tableau &tab, size_t largeur, size_t hauteur) {
+    if (p / hauteur != hauteur - 1) {
+        if (!checkAttachement(tab[p].getAttachement(2), tab[p + largeur].getAttachement(0)))
             return false;
     }
-    if (p % 3 != 2) {
+    if (p % largeur != largeur - 1) {
         if (!checkAttachement(tab[p].getAttachement(1), tab[p + 1].getAttachement(3)))
             return false;
     }
     return true;
 }
 
-void solutionRec(Tableau& tab, size_t taille ){
+void solutionRec(Tableau& tab, size_t taille, size_t largeur, size_t hauteur){
     if( taille == 0 ){
-        for(size_t i = 0; i < 9; ++i)
+        for(size_t i = 0; i < largeur*hauteur; ++i)
             cout << tab[i].getCode() << " ";
         cout << endl;
     }else{
         for(size_t i = 0; i < taille ; ++i ){
-
             for( ; tab[i].rot < 4; ++tab[i].rot) {
                 swap(tab[i], tab[taille - 1]);
-                if (tester(taille - 1, tab)) {
-                    solutionRec(tab, taille - 1);
+                if (tester(taille - 1, tab, largeur, hauteur)) {
+                    solutionRec(tab, taille - 1, largeur, hauteur);
                 }
                 swap(tab[i], tab[taille - 1]);
             }
-
             tab[i].rot = 0;
-
         }
-        //solutionRec(tab, taille-1);
     }
 }
-
-/*
-void solutionRec(size_t idPi, size_t pos, Tableau &tab) {
-    // PIECES[idPi]
-    tab[pos].id = idPi;
-    for (int i = 0; i < 4; ++i) {
-        tab[pos].rot = i;
-        if(tester(pos, pos - 1, tab)&&tester(pos, pos - 3, tab)){
-            solutionRec()
-        }
-    }
-}*/
-
